@@ -1,0 +1,19 @@
+{
+  "ranker_name": "Random",
+  "recall_at_10": {
+    "mean": 0.15,
+    "ci_lower": 0.1133,
+    "ci_upper": 0.1892
+  },
+  "mean_percentile_rank": {
+    "mean": 0.513,
+    "ci_lower": 0.4755,
+    "ci_upper": 0.5473
+  },
+  "mrr": {
+    "mean": 0.4218,
+    "ci_lower": 0.365,
+    "ci_upper": 0.4843
+  },
+  "num_documents": 100
+}

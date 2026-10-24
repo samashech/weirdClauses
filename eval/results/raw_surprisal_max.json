@@ -1,0 +1,19 @@
+{
+  "ranker_name": "Raw Surprisal (max)",
+  "recall_at_10": {
+    "mean": 0.3,
+    "ci_lower": 0.2608,
+    "ci_upper": 0.3433
+  },
+  "mean_percentile_rank": {
+    "mean": 0.6817,
+    "ci_lower": 0.6549,
+    "ci_upper": 0.7078
+  },
+  "mrr": {
+    "mean": 0.6218,
+    "ci_lower": 0.564,
+    "ci_upper": 0.6827
+  },
+  "num_documents": 100
+}

@@ -1,0 +1,306 @@
+[
+  {
+    "ranker_name": "Random",
+    "recall_at_10": {
+      "mean": 0.15,
+      "ci_lower": 0.1133,
+      "ci_upper": 0.1892
+    },
+    "mean_percentile_rank": {
+      "mean": 0.513,
+      "ci_lower": 0.4755,
+      "ci_upper": 0.5473
+    },
+    "mrr": {
+      "mean": 0.4218,
+      "ci_lower": 0.365,
+      "ci_upper": 0.4843
+    },
+    "num_documents": 100
+  },
+  {
+    "ranker_name": "Longest Clause",
+    "recall_at_10": {
+      "mean": 0.7217,
+      "ci_lower": 0.6833,
+      "ci_upper": 0.7617
+    },
+    "mean_percentile_rank": {
+      "mean": 0.9231,
+      "ci_lower": 0.916,
+      "ci_upper": 0.9306
+    },
+    "mrr": {
+      "mean": 1.0,
+      "ci_lower": 1.0,
+      "ci_upper": 1.0
+    },
+    "num_documents": 100
+  },
+  {
+    "ranker_name": "TF-IDF Distance",
+    "recall_at_10": {
+      "mean": 0.2733,
+      "ci_lower": 0.2225,
+      "ci_upper": 0.3208
+    },
+    "mean_percentile_rank": {
+      "mean": 0.7754,
+      "ci_lower": 0.7583,
+      "ci_upper": 0.7926
+    },
+    "mrr": {
+      "mean": 0.5749,
+      "ci_lower": 0.5174,
+      "ci_upper": 0.6377
+    },
+    "num_documents": 100
+  },
+  {
+    "ranker_name": "Keyword/Rule Heuristic",
+    "recall_at_10": {
+      "mean": 0.5642,
+      "ci_lower": 0.5233,
+      "ci_upper": 0.6067
+    },
+    "mean_percentile_rank": {
+      "mean": 0.8029,
+      "ci_lower": 0.7773,
+      "ci_upper": 0.8296
+    },
+    "mrr": {
+      "mean": 0.9475,
+      "ci_lower": 0.915,
+      "ci_upper": 0.975
+    },
+    "num_documents": 100
+  },
+  {
+    "ranker_name": "Raw Surprisal (mean)",
+    "recall_at_10": {
+      "mean": 0.2225,
+      "ci_lower": 0.185,
+      "ci_upper": 0.2642
+    },
+    "mean_percentile_rank": {
+      "mean": 0.6484,
+      "ci_lower": 0.6212,
+      "ci_upper": 0.6777
+    },
+    "mrr": {
+      "mean": 0.5853,
+      "ci_lower": 0.5129,
+      "ci_upper": 0.6508
+    },
+    "num_documents": 100
+  },
+  {
+    "ranker_name": "Raw Surprisal (topq)",
+    "recall_at_10": {
+      "mean": 0.27,
+      "ci_lower": 0.2283,
+      "ci_upper": 0.3175
+    },
+    "mean_percentile_rank": {
+      "mean": 0.6872,
+      "ci_lower": 0.6581,
+      "ci_upper": 0.7141
+    },
+    "mrr": {
+      "mean": 0.6498,
+      "ci_lower": 0.5827,
+      "ci_upper": 0.7162
+    },
+    "num_documents": 100
+  },
+  {
+    "ranker_name": "Raw Surprisal (max)",
+    "recall_at_10": {
+      "mean": 0.3,
+      "ci_lower": 0.2608,
+      "ci_upper": 0.3433
+    },
+    "mean_percentile_rank": {
+      "mean": 0.6817,
+      "ci_lower": 0.6549,
+      "ci_upper": 0.7078
+    },
+    "mrr": {
+      "mean": 0.6218,
+      "ci_lower": 0.564,
+      "ci_upper": 0.6827
+    },
+    "num_documents": 100
+  },
+  {
+    "ranker_name": "Conditional Surprisal (mean, k=1)",
+    "recall_at_10": {
+      "mean": 0.42,
+      "ci_lower": 0.3717,
+      "ci_upper": 0.4725
+    },
+    "mean_percentile_rank": {
+      "mean": 0.8057,
+      "ci_lower": 0.7872,
+      "ci_upper": 0.8244
+    },
+    "mrr": {
+      "mean": 0.7928,
+      "ci_lower": 0.7403,
+      "ci_upper": 0.8453
+    },
+    "num_documents": 100
+  },
+  {
+    "ranker_name": "Conditional Surprisal (topq, k=1)",
+    "recall_at_10": {
+      "mean": 0.5167,
+      "ci_lower": 0.4692,
+      "ci_upper": 0.5625
+    },
+    "mean_percentile_rank": {
+      "mean": 0.8203,
+      "ci_lower": 0.7986,
+      "ci_upper": 0.8421
+    },
+    "mrr": {
+      "mean": 0.9156,
+      "ci_lower": 0.8712,
+      "ci_upper": 0.9575
+    },
+    "num_documents": 100
+  },
+  {
+    "ranker_name": "Conditional Surprisal (max, k=1)",
+    "recall_at_10": {
+      "mean": 0.3383,
+      "ci_lower": 0.2892,
+      "ci_upper": 0.39
+    },
+    "mean_percentile_rank": {
+      "mean": 0.7599,
+      "ci_lower": 0.737,
+      "ci_upper": 0.7816
+    },
+    "mrr": {
+      "mean": 0.6946,
+      "ci_lower": 0.6346,
+      "ci_upper": 0.75
+    },
+    "num_documents": 100
+  },
+  {
+    "ranker_name": "Conditional Surprisal (mean, k=3)",
+    "recall_at_10": {
+      "mean": 0.3883,
+      "ci_lower": 0.3408,
+      "ci_upper": 0.4375
+    },
+    "mean_percentile_rank": {
+      "mean": 0.7749,
+      "ci_lower": 0.7527,
+      "ci_upper": 0.7952
+    },
+    "mrr": {
+      "mean": 0.7368,
+      "ci_lower": 0.677,
+      "ci_upper": 0.7932
+    },
+    "num_documents": 100
+  },
+  {
+    "ranker_name": "Conditional Surprisal (topq, k=3)",
+    "recall_at_10": {
+      "mean": 0.4825,
+      "ci_lower": 0.4342,
+      "ci_upper": 0.53
+    },
+    "mean_percentile_rank": {
+      "mean": 0.7931,
+      "ci_lower": 0.7705,
+      "ci_upper": 0.8153
+    },
+    "mrr": {
+      "mean": 0.8934,
+      "ci_lower": 0.8434,
+      "ci_upper": 0.9417
+    },
+    "num_documents": 100
+  },
+  {
+    "ranker_name": "Conditional Surprisal (max, k=3)",
+    "recall_at_10": {
+      "mean": 0.3217,
+      "ci_lower": 0.2717,
+      "ci_upper": 0.3733
+    },
+    "mean_percentile_rank": {
+      "mean": 0.7116,
+      "ci_lower": 0.6851,
+      "ci_upper": 0.7394
+    },
+    "mrr": {
+      "mean": 0.6843,
+      "ci_lower": 0.6234,
+      "ci_upper": 0.7443
+    },
+    "num_documents": 100
+  },
+  {
+    "ranker_name": "Conditional Surprisal (mean, k=5)",
+    "recall_at_10": {
+      "mean": 0.3733,
+      "ci_lower": 0.3258,
+      "ci_upper": 0.4233
+    },
+    "mean_percentile_rank": {
+      "mean": 0.7675,
+      "ci_lower": 0.7455,
+      "ci_upper": 0.789
+    },
+    "mrr": {
+      "mean": 0.7176,
+      "ci_lower": 0.657,
+      "ci_upper": 0.7751
+    },
+    "num_documents": 100
+  },
+  {
+    "ranker_name": "Conditional Surprisal (topq, k=5)",
+    "recall_at_10": {
+      "mean": 0.4583,
+      "ci_lower": 0.4042,
+      "ci_upper": 0.51
+    },
+    "mean_percentile_rank": {
+      "mean": 0.7895,
+      "ci_lower": 0.7672,
+      "ci_upper": 0.8115
+    },
+    "mrr": {
+      "mean": 0.8775,
+      "ci_lower": 0.8258,
+      "ci_upper": 0.93
+    },
+    "num_documents": 100
+  },
+  {
+    "ranker_name": "Conditional Surprisal (max, k=5)",
+    "recall_at_10": {
+      "mean": 0.305,
+      "ci_lower": 0.255,
+      "ci_upper": 0.3567
+    },
+    "mean_percentile_rank": {
+      "mean": 0.7117,
+      "ci_lower": 0.6862,
+      "ci_upper": 0.7385
+    },
+    "mrr": {
+      "mean": 0.6698,
+      "ci_lower": 0.6024,
+      "ci_upper": 0.7331
+    },
+    "num_documents": 100
+  }
+]

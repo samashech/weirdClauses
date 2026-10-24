@@ -1,0 +1,19 @@
+{
+  "ranker_name": "Longest Clause",
+  "recall_at_10": {
+    "mean": 0.7217,
+    "ci_lower": 0.6833,
+    "ci_upper": 0.7617
+  },
+  "mean_percentile_rank": {
+    "mean": 0.9231,
+    "ci_lower": 0.916,
+    "ci_upper": 0.9306
+  },
+  "mrr": {
+    "mean": 1.0,
+    "ci_lower": 1.0,
+    "ci_upper": 1.0
+  },
+  "num_documents": 100
+}

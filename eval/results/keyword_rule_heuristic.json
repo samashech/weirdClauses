@@ -1,0 +1,19 @@
+{
+  "ranker_name": "Keyword/Rule Heuristic",
+  "recall_at_10": {
+    "mean": 0.5642,
+    "ci_lower": 0.5233,
+    "ci_upper": 0.6067
+  },
+  "mean_percentile_rank": {
+    "mean": 0.8029,
+    "ci_lower": 0.7773,
+    "ci_upper": 0.8296
+  },
+  "mrr": {
+    "mean": 0.9475,
+    "ci_lower": 0.915,
+    "ci_upper": 0.975
+  },
+  "num_documents": 100
+}

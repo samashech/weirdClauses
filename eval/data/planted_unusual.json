@@ -1,0 +1,152 @@
+[
+  {
+    "id": "unusual_01_auto_renewal",
+    "category": "auto-renewal",
+    "title": "Extended 180-Day Notice Auto-Renewal",
+    "text": "Unless Tenant provides certified written notice of non-renewal exactly 180 days prior to expiration, this agreement automatically renews for an irrevocable term of three additional years."
+  },
+  {
+    "id": "unusual_02_unilateral_rent",
+    "category": "unilateral rent",
+    "title": "Unilateral Rent Adjustments Without Limitation",
+    "text": "Landlord reserves the unrestricted right to modify the monthly rental rate at any time during the term upon providing forty-eight hours written notice, with no statutory cap on increase percentages."
+  },
+  {
+    "id": "unusual_03_broad_entry",
+    "category": "entry rights",
+    "title": "Unannounced 24/7 Landlord Surveillance Entry",
+    "text": "Landlord and Landlord's designated inspectors may enter the interior dwelling at any hour of the day or night without prior notification to audit personal belongings and environmental cleanliness."
+  },
+  {
+    "id": "unusual_04_waived_repairs",
+    "category": "repair duties",
+    "title": "Total Waiver of Landlord Habitability and Structural Duties",
+    "text": "Tenant expressly waives all statutory implied warranties of habitability and agrees to bear sole financial responsibility for repairing building foundations, roof leaks, and centralized HVAC boilers."
+  },
+  {
+    "id": "unusual_05_noise_penalty",
+    "category": "penalties",
+    "title": "Daily $500 Liquidated Damages For Noise Infractions",
+    "text": "Any sound audible beyond the perimeter walls, as assessed solely by Landlord, shall trigger an automatic, non-negotiable liquidated penalty of $500 per calendar day charged directly to Tenant."
+  },
+  {
+    "id": "unusual_06_forfeiture_deposit",
+    "category": "security deposit",
+    "title": "Automatic Deposit Forfeiture Upon Move-Out",
+    "text": "Regardless of premises cleanliness or lack of physical damage, Tenant's entire security deposit is deemed fully earned by Landlord upon lease execution and is 100% non-refundable under all circumstances."
+  },
+  {
+    "id": "unusual_07_waive_court",
+    "category": "legal rights",
+    "title": "Complete Waiver of Jury Trial and Counterclaims",
+    "text": "Tenant unconditionally waives all constitutional rights to trial by jury, court proceedings, class action participation, and the right to assert any statutory counterclaims or offsets against Landlord."
+  },
+  {
+    "id": "unusual_08_affiliate_goods",
+    "category": "commercial tie-in",
+    "title": "Mandatory Affiliate Purchasing Requirement",
+    "text": "Tenant covenants to purchase all household cleaning chemicals, paper products, and non-perishable pantry groceries exclusively from Landlord's designated retail affiliate at prices set by affiliate."
+  },
+  {
+    "id": "unusual_09_termination_at_will",
+    "category": "termination",
+    "title": "Landlord At-Will Immediate Lease Termination",
+    "text": "Landlord may cancel this tenancy at will without cause or judicial process upon delivering twenty-four hours written notice, requiring Tenant to vacate immediately and surrender all keys."
+  },
+  {
+    "id": "unusual_10_guest_ban",
+    "category": "guests",
+    "title": "Total Overnight Guest Ban and Daily Fine",
+    "text": "No visitors, family members, or overnight guests are permitted within the premises between 9:00 PM and 8:00 AM; any unauthorized guest presence incurs a mandatory penalty of $250 per night."
+  },
+  {
+    "id": "unusual_11_social_media_audit",
+    "category": "privacy",
+    "title": "Compulsory Social Media and Email Account Access",
+    "text": "Tenant shall provide Landlord with current username credentials and administrative access to all personal social media and email accounts upon request for background verification and monitoring."
+  },
+  {
+    "id": "unusual_12_no_rent_abatement",
+    "category": "habitability",
+    "title": "No Abatement For Utility or Plumbing Failures",
+    "text": "In the event of total failure of running water, electrical grid, plumbing drainage, or heat exceeding thirty consecutive days, Tenant shall not be entitled to any rent reduction, refund, or lease cancellation."
+  },
+  {
+    "id": "unusual_13_camera_surveillance",
+    "category": "surveillance",
+    "title": "Mandatory Smart Camera Footage Submission",
+    "text": "Tenant must submit all audio and video recordings captured by private security cameras, baby monitors, and smart speaker devices within the unit to Landlord on the first day of each week."
+  },
+  {
+    "id": "unusual_14_compounded_escalation",
+    "category": "rent escalation",
+    "title": "Compulsory 25% Annual Rent Compounding Escalation",
+    "text": "Base rent shall automatically increase by twenty-five percent compounded annually on each anniversary of this lease, irrespective of consumer price index inflation or prevailing residential market rates."
+  },
+  {
+    "id": "unusual_15_absence_forfeiture",
+    "category": "abandonment",
+    "title": "Immediate Abandonment Forfeiture After 48 Hours Absence",
+    "text": "If Tenant remains absent from the leased premises for more than forty-eight consecutive hours without prior written leave, tenancy is deemed forfeited and Landlord may dispose of all possessions."
+  },
+  {
+    "id": "unusual_16_lien_on_pets_and_effects",
+    "category": "property lien",
+    "title": "Universal Security Lien Over Pets and Personal Effects",
+    "text": "Landlord is granted an immediate possessory security lien against all Tenant personal property, electronic devices, clothing, and domestic pets to secure payment of any disputed fees or charges."
+  },
+  {
+    "id": "unusual_17_unilateral_relocation",
+    "category": "relocation",
+    "title": "Unilateral Tenant Relocation to Subordinate Units",
+    "text": "Landlord reserves the unilateral authority to relocate Tenant at any time to any smaller or basement dwelling unit within the property complex without any proportional reduction in monthly rent."
+  },
+  {
+    "id": "unusual_18_one_sided_legal_fees",
+    "category": "legal fees",
+    "title": "One-Sided Legal Fees Liability Regardless of Outcome",
+    "text": "Tenant shall pay all attorney fees, court filing costs, and litigation expenses incurred by Landlord in any legal dispute, even if Tenant prevails entirely on the merits in judicial arbitration."
+  },
+  {
+    "id": "unusual_19_gross_negligence_exemption",
+    "category": "liability",
+    "title": "Immunity for Landlord Gross Negligence and Theft",
+    "text": "Landlord and staff shall be held completely harmless and exempt from liability for any intentional torts, theft, bodily injury, or damages arising from gross negligence or willful misconduct on the premises."
+  },
+  {
+    "id": "unusual_20_mandatory_convenience_fee",
+    "category": "fees",
+    "title": "Mandatory Non-Refundable Environmental Convenience Fee",
+    "text": "In addition to base rent, Tenant shall pay a non-negotiable monthly administrative and environmental convenience fee of $350, which provides no additional services or tenant privileges."
+  },
+  {
+    "id": "unusual_21_gag_clause",
+    "category": "speech",
+    "title": "Non-Disparagement Gag and Review Prohibition",
+    "text": "Tenant is strictly prohibited from publishing any negative review, complaint, or statement regarding Landlord or property condition on internet platforms, social media, or to local media."
+  },
+  {
+    "id": "unusual_22_building_repainting",
+    "category": "maintenance",
+    "title": "Tenant Obligation to Repaint Exterior Building Facade",
+    "text": "Prior to vacating the premises, Tenant shall hire licensed commercial contractors at Tenant's sole expense to pressure wash and repaint the entire exterior facade of the multi-unit apartment building."
+  },
+  {
+    "id": "unusual_23_quarterly_tax_audits",
+    "category": "financial audit",
+    "title": "Mandatory Submission of Certified Quarterly Tax Returns",
+    "text": "Tenant shall deliver certified personal income tax returns and banking statements to Landlord every three months; failure to furnish financial records within five days shall constitute an incurable breach."
+  },
+  {
+    "id": "unusual_24_excessive_late_fee",
+    "category": "late fees",
+    "title": "Fifty Percent Late Charge on Same-Day Delay",
+    "text": "If rent is not received by 5:00 PM on the first calendar day of the month, an immediate late fee equal to fifty percent of the total monthly rent shall be assessed and added to Tenant's ledger."
+  },
+  {
+    "id": "unusual_25_exotic_python_authorization",
+    "category": "wildlife",
+    "title": "Landlord Reticulated Python Common Area Access",
+    "text": "Tenant agrees that Landlord may release an un-caged twelve-foot reticulated python into common stairwells and courtyard gardens for natural rodent suppression without prior warning."
+  }
+]

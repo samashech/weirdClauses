@@ -1,0 +1,177 @@
+[
+  {
+    "id": "std_01_term",
+    "title": "Lease Term",
+    "text": "The lease begins on the Commencement Date and continues for an initial fixed term of twelve months, concluding on the Termination Date unless renewed in accordance with this agreement."
+  },
+  {
+    "id": "std_02_rent",
+    "title": "Monthly Rent Obligation",
+    "text": "Tenant shall remit rent in the amount of $1,650 per month, payable via electronic bank transfer or cashier's check on the first day of each calendar month."
+  },
+  {
+    "id": "std_03_deposit",
+    "title": "Security Deposit Holding",
+    "text": "A security deposit of $1,650 shall be deposited in an insured financial institution and held as security for the faithful performance of Tenant's covenants herein."
+  },
+  {
+    "id": "std_04_deposit_return",
+    "title": "Return of Security Deposit",
+    "text": "Within thirty days following the surrender of the premises, Landlord shall return the balance of the security deposit along with an itemized statement of any deductions for damages."
+  },
+  {
+    "id": "std_05_utilities",
+    "title": "Utility Services",
+    "text": "Tenant shall establish and maintain accounts in Tenant's name for electricity, natural gas, and internet services, paying all related utility charges directly to the utility providers."
+  },
+  {
+    "id": "std_06_water_sewer",
+    "title": "Municipal Water and Sewer",
+    "text": "Landlord shall provide and pay for standard municipal water and trash removal services for the leased unit, subject to reasonable domestic consumption."
+  },
+  {
+    "id": "std_07_use_occupancy",
+    "title": "Residential Use Only",
+    "text": "The leased premises shall be utilized exclusively as a private single-family residence and for no other commercial or manufacturing purposes without Landlord's prior written permission."
+  },
+  {
+    "id": "std_08_condition_check",
+    "title": "Premises Move-In Condition",
+    "text": "Tenant acknowledges having inspected the premises prior to move-in and agrees that the property is in clean, habitable, and good working condition, free of noticeable defects."
+  },
+  {
+    "id": "std_09_maintenance_landlord",
+    "title": "Habitability and Repairs",
+    "text": "Landlord shall keep the roof, structural foundations, heating system, and exterior common areas in sound repair and conforming to local building and housing standards."
+  },
+  {
+    "id": "std_10_maintenance_tenant",
+    "title": "Routine Tenant Upkeep",
+    "text": "Tenant agrees to maintain the interior dwelling in a clean, sanitary state, properly disposing of rubbish and replacing HVAC air filters every ninety days."
+  },
+  {
+    "id": "std_11_alterations",
+    "title": "Unauthorized Alterations",
+    "text": "Tenant shall not paint walls, make structural modifications, install major fixtures, or apply adhesive wallpaper without obtaining advance written approval from Landlord."
+  },
+  {
+    "id": "std_12_smoke_detectors",
+    "title": "Smoke Detector Testing",
+    "text": "Tenant agrees to test all smoke alarms and carbon monoxide detectors on a monthly basis and promptly notify Landlord if any safety alarm becomes defective."
+  },
+  {
+    "id": "std_13_entry_notice",
+    "title": "Landlord Entry Notice",
+    "text": "Landlord or Landlord's agents may enter the premises during standard business hours to conduct necessary repairs or inspections, upon providing at least twenty-four hours advance notice."
+  },
+  {
+    "id": "std_14_emergency_entry",
+    "title": "Emergency Access",
+    "text": "In the event of an imminent safety emergency, fire, or severe plumbing rupture, Landlord may enter the premises immediately without prior written notice."
+  },
+  {
+    "id": "std_15_quiet_hours",
+    "title": "Quiet Hours and Noise",
+    "text": "Tenants and their guests shall observe quiet hours between 10:00 PM and 7:00 AM daily, refraining from playing amplified music or creating excessive noise that disturbs neighbors."
+  },
+  {
+    "id": "std_16_subletting",
+    "title": "Subletting and Assignment Restrictions",
+    "text": "Tenant shall not assign this lease or sublet all or any portion of the premises to any subtenant without the prior written consent of Landlord."
+  },
+  {
+    "id": "std_17_guests",
+    "title": "Temporary Guests Policy",
+    "text": "Occasional guests are permitted to visit the premises for periods not exceeding fourteen cumulative days within any calendar month without Landlord's written authorization."
+  },
+  {
+    "id": "std_18_pets",
+    "title": "Pet Policy and Deposit",
+    "text": "No domestic animals, birds, or reptiles shall be kept on the premises without an executed pet addendum and receipt of a separate refundable pet deposit."
+  },
+  {
+    "id": "std_19_smoking",
+    "title": "Smoke-Free Environment",
+    "text": "Smoking, vaping, or burning of tobacco, herbal products, or incense is strictly prohibited inside the dwelling unit, private balconies, and common hallways."
+  },
+  {
+    "id": "std_20_insurance",
+    "title": "Tenant Renters Insurance",
+    "text": "Tenant shall obtain and maintain a comprehensive personal renter's liability policy with minimum coverage of $100,000 for personal injury and property damage throughout the lease term."
+  },
+  {
+    "id": "std_21_parking",
+    "title": "Assigned Vehicle Parking",
+    "text": "Tenant is assigned one designated off-street parking stall for an operational passenger vehicle. Inoperative vehicles, trailers, or commercial vans are subject to towing."
+  },
+  {
+    "id": "std_22_trash",
+    "title": "Waste and Recycling Disposal",
+    "text": "All household waste and recyclable goods must be placed inside designated outdoor bins in sealed plastic bags in compliance with municipal recycling guidelines."
+  },
+  {
+    "id": "std_23_absence",
+    "title": "Notice of Extended Absence",
+    "text": "Tenant shall advise Landlord in writing if Tenant anticipates being absent from the premises for a continuous period exceeding seven consecutive days."
+  },
+  {
+    "id": "std_24_locks",
+    "title": "Lock and Key Policy",
+    "text": "Tenant shall not install additional locks, deadbolts, or security latch systems without providing Landlord with duplicate working keys within twenty-four hours of installation."
+  },
+  {
+    "id": "std_25_surrender",
+    "title": "Surrender of Premises",
+    "text": "Upon termination of the tenancy, Tenant shall surrender the premises in broom-clean condition, ordinary wear and tear excepted, and return all keys to Landlord."
+  },
+  {
+    "id": "std_26_holdover",
+    "title": "Holdover Tenancy",
+    "text": "If Tenant remains in possession following expiration of the lease term without an executed renewal, tenancy shall convert to a month-to-month agreement at 115% of the prior base rent."
+  },
+  {
+    "id": "std_27_severability",
+    "title": "Severability Clause",
+    "text": "If any provision of this agreement is determined by a court of competent jurisdiction to be invalid or unenforceable, the remaining provisions shall remain in full force and effect."
+  },
+  {
+    "id": "std_28_entire_agreement",
+    "title": "Entire Agreement Integration",
+    "text": "This contract represents the complete understanding between the parties and supersedes all prior verbal statements, promises, or representations not incorporated herein."
+  },
+  {
+    "id": "std_29_notices",
+    "title": "Written Notice Requirements",
+    "text": "All notices required under this lease must be in writing and delivered personally, sent by certified mail, or transmitted via confirmed electronic mail."
+  },
+  {
+    "id": "std_30_default",
+    "title": "Remedies Upon Tenant Default",
+    "text": "If Tenant fails to pay rent when due or breaches any material term, Landlord may issue statutory notice to cure or quit and pursue remedies provided under state landlord-tenant laws."
+  },
+  {
+    "id": "std_31_joint_liability",
+    "title": "Joint and Several Responsibility",
+    "text": "If more than one person signs this agreement as Tenant, each individual shall be jointly and severally liable for all rent obligations and covenants under this lease."
+  },
+  {
+    "id": "std_32_casualty",
+    "title": "Fire and Casualty Destruction",
+    "text": "If the building is rendered wholly uninhabitable by fire or natural catastrophe through no fault of Tenant, either party may terminate the lease upon written notice."
+  },
+  {
+    "id": "std_33_subordination",
+    "title": "Lease Subordination",
+    "text": "This lease agreement is and shall remain subordinate to the lien of any existing or subsequent mortgages placed upon the real property by the owner."
+  },
+  {
+    "id": "std_34_hoa_rules",
+    "title": "Community Rules Compliance",
+    "text": "Tenant agrees to abide by all recorded community covenants, bylaws, and condominium rules governing shared elevators, courtyards, and common amenities."
+  },
+  {
+    "id": "std_35_non_waiver",
+    "title": "Landlord Non-Waiver",
+    "text": "Landlord's acceptance of late rent or failure to insist upon strict compliance with any provision shall not constitute a waiver of Landlord's right to enforce such terms thereafter."
+  }
+]

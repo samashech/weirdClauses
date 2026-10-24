@@ -1,0 +1,19 @@
+{
+  "ranker_name": "TF-IDF Distance",
+  "recall_at_10": {
+    "mean": 0.2733,
+    "ci_lower": 0.2225,
+    "ci_upper": 0.3208
+  },
+  "mean_percentile_rank": {
+    "mean": 0.7754,
+    "ci_lower": 0.7583,
+    "ci_upper": 0.7926
+  },
+  "mrr": {
+    "mean": 0.5749,
+    "ci_lower": 0.5174,
+    "ci_upper": 0.6377
+  },
+  "num_documents": 100
+}

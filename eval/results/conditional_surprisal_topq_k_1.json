@@ -1,0 +1,19 @@
+{
+  "ranker_name": "Conditional Surprisal (topq, k=1)",
+  "recall_at_10": {
+    "mean": 0.5167,
+    "ci_lower": 0.4692,
+    "ci_upper": 0.5625
+  },
+  "mean_percentile_rank": {
+    "mean": 0.8203,
+    "ci_lower": 0.7986,
+    "ci_upper": 0.8421
+  },
+  "mrr": {
+    "mean": 0.9156,
+    "ci_lower": 0.8712,
+    "ci_upper": 0.9575
+  },
+  "num_documents": 100
+}
