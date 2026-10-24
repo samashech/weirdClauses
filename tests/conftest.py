@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+from pathlib import Path
 
 import pytest
 from typer.testing import CliRunner
@@ -16,3 +17,9 @@ os.environ["WC_CACHE_DIR"] = "/tmp/weirdclauses_test_cache"
 def cli_runner() -> CliRunner:
     """Fixture providing Typer CLI test runner."""
     return CliRunner()
+
+
+@pytest.fixture
+def samples_dir() -> Path:
+    """Fixture returning path to samples directory."""
+    return Path(__file__).resolve().parent.parent / "samples"

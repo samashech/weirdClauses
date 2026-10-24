@@ -25,6 +25,7 @@ class ScoredClause:
     nearest_similarity: float | None = None
     gain: float | None = None
     nearest_matches: list[BaselineMatch] = field(default_factory=list)
+    tokens: list[tuple[int, int, float]] = field(default_factory=list)
 
 
 def aggregate_mean(values: Sequence[float]) -> float:
@@ -112,12 +113,14 @@ def score_clauses(
         raise ValueError(f"Unknown aggregator '{aggregator}'. Valid options are: {valid}")
 
     # Map raw token surprisals to clause spans via token midpoint
-    clause_tokens: dict[int, list[float]] = {c.id: [] for c in clauses if c.kind == "clause"}
+    clause_tokens: dict[int, list[tuple[int, int, float]]] = {
+        c.id: [] for c in clauses if c.kind == "clause"
+    }
     for t_start, t_end, bits in token_surprisals:
         mid = (t_start + t_end) // 2
         for c in clauses:
             if c.kind == "clause" and c.start <= mid < c.end:
-                clause_tokens[c.id].append(bits)
+                clause_tokens[c.id].append((t_start, t_end, bits))
                 break
 
     scored_items: list[ScoredClause] = []
@@ -126,7 +129,8 @@ def score_clauses(
         if c.kind != "clause":
             continue
 
-        raw_bits = clause_tokens.get(c.id, [])
+        raw_toks = clause_tokens.get(c.id, [])
+        raw_bits = [b for _, _, b in raw_toks]
         raw_score = round(agg_fn(raw_bits) if raw_bits else 0.0, 4)
 
         # Retrieve nearest standard clauses from baseline pack
@@ -160,6 +164,7 @@ def score_clauses(
                 nearest_similarity=nearest_sim,
                 gain=gain,
                 nearest_matches=matches,
+                tokens=raw_toks,
             )
         )
 
