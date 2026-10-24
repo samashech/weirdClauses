@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+import os
 from pathlib import Path
 from typing import Annotated
 
@@ -10,12 +11,11 @@ import typer
 from rich.console import Console
 from rich.panel import Panel
 from rich.progress import BarColumn, Progress, SpinnerColumn, TaskProgressColumn, TextColumn
-from rich.table import Table
 
 from weirdclauses import LEGAL_DISCLAIMER, __version__
 from weirdclauses.config import settings
 from weirdclauses.doctor import run_doctor
-from weirdclauses.pipeline import run_pipeline
+from weirdclauses.pipeline import create_ranking_table, create_top_anomalies_table, run_pipeline
 from weirdclauses.report import build_report, export_html, export_json, export_markdown
 
 app = typer.Typer(
@@ -105,35 +105,7 @@ def score(
             file, mode=mode, aggregator=aggregator, mock=mock, device=device, on_step=step_cb
         )
 
-    title = (
-        f"WeirdClauses Ranking ({len(res.scored_clauses)} clauses "
-        f"| Mode: {res.mode} | Agg: {res.aggregator})"
-    )
-    table = Table(title=title, show_lines=True)
-    table.add_column("Rank", style="bold cyan", justify="right", width=5)
-    table.add_column("Score (bits)", justify="right", style="bold green", width=12)
-    table.add_column("Z-Score", justify="right", style="bold yellow", width=8)
-    if res.mode == "conditional":
-        table.add_column("Gain", justify="right", style="bold magenta", width=7)
-    table.add_column("Sim", justify="right", width=6)
-    table.add_column("Nearest Match", style="cyan", width=20)
-    table.add_column("Section / Heading", style="bold magenta", width=22)
-    table.add_column("Clause Snippet", ratio=1)
-
-    display_count = min(top, len(res.scored_clauses))
-    for rank, sc in enumerate(res.scored_clauses[:display_count], start=1):
-        heading = sc.clause.parent_heading or "(No heading)"
-        match_title = sc.nearest_matches[0].clause.title if sc.nearest_matches else "-"
-        sim_str = f"{sc.nearest_similarity:.2f}" if sc.nearest_similarity is not None else "-"
-        snippet = (
-            sc.clause.content[:117] + "..." if len(sc.clause.content) > 120 else sc.clause.content
-        )
-        row = [str(rank), f"{sc.score:.2f}", f"{sc.z_score:+.2f}"]
-        if res.mode == "conditional":
-            row.append(f"{sc.gain:+.2f}" if sc.gain is not None else "-")
-        row.extend([sim_str, match_title, heading, snippet])
-        table.add_row(*row)
-
+    table, display_count = create_ranking_table(res, top)
     console.print(table)
     console.print(f"[dim]Showing top {display_count} clauses. {LEGAL_DISCLAIMER}[/dim]")
 
@@ -218,25 +190,26 @@ def review(
         f"[bold green]✓[/bold green] Report saved to [bold underline]{out}[/bold underline]\n"
     )
 
-    top_table = Table(
-        title=f"Top Unusual Clauses (Read These First — Top {top_limit} of {num_scored})",
-        show_lines=True,
-    )
-    top_table.add_column("Rank", justify="right", style="bold cyan", width=5)
-    top_table.add_column("Score", justify="right", style="bold green", width=10)
-    top_table.add_column("Z-Score", justify="right", style="bold yellow", width=8)
-    top_table.add_column("Nearest Standard", style="cyan", width=24)
-    top_table.add_column("Clause Snippet", ratio=1)
-
-    for rank, sc in enumerate(res.scored_clauses[:top_limit], start=1):
-        m_title = sc.nearest_matches[0].clause.title if sc.nearest_matches else "-"
-        snippet = (
-            sc.clause.content[:100] + "..." if len(sc.clause.content) > 100 else sc.clause.content
-        )
-        top_table.add_row(str(rank), f"{sc.score:.2f} b", f"{sc.z_score:+.2f}", m_title, snippet)
-
+    top_table = create_top_anomalies_table(res, top_limit)
     console.print(top_table)
     console.print(f"[dim]{LEGAL_DISCLAIMER}[/dim]\n")
+
+
+@app.command()
+def serve(
+    host: Annotated[str, typer.Option("--host", "-h", help="Host address to bind")] = "127.0.0.1",
+    port: Annotated[int, typer.Option("--port", "-p", help="Port number to listen on")] = 8000,
+    open_browser: Annotated[
+        bool, typer.Option("--open", help="Open interface in default web browser")
+    ] = False,
+    mock: Annotated[bool, typer.Option("--mock", help="Force deterministic mock mode")] = False,
+) -> None:
+    """Start local offline interactive web interface."""
+    from weirdclauses.web import start_server
+
+    if mock:
+        os.environ["WC_MOCK"] = "1"
+    start_server(host=host, port=port, open_browser=open_browser)
 
 
 if __name__ == "__main__":

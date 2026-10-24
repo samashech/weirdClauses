@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WeirdClauses - Contract Anomaly Explorer</title>
+<style>
+:root {
+  --bg: #f8fafc; --surface: #ffffff; --surface-alt: #f1f5f9; --text: #0f172a;
+  --text-muted: #64748b; --border: #cbd5e1; --accent: #2563eb; --accent-hover: #1d4ed8;
+  --warn-bg: #fffbeb; --warn-border: #fcd34d; --warn-text: #92400e;
+  --btn-text: #ffffff; --card-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+[data-theme="dark"] {
+  --bg: #0f172a; --surface: #1e293b; --surface-alt: #334155; --text: #f8fafc;
+  --text-muted: #94a3b8; --border: #475569; --accent: #38bdf8; --accent-hover: #0284c7;
+  --warn-bg: #451a03; --warn-border: #78350f; --warn-text: #fde68a;
+  --btn-text: #0f172a; --card-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+body { margin:0; padding:0; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,sans-serif; line-height:1.6; }
+.container { max-width:1080px; margin:0 auto; padding:20px; }
+header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+.banner { background:var(--warn-bg); border:1px solid var(--warn-border); color:var(--warn-text); padding:12px 16px; border-radius:8px; font-size:0.88rem; font-weight:500; margin-bottom:20px; }
+.controls { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:20px; margin-bottom:24px; box-shadow:var(--card-shadow); }
+.row { display:flex; gap:16px; flex-wrap:wrap; margin-bottom:12px; }
+.col { flex:1; min-width:240px; }
+label { display:block; font-weight:600; font-size:0.85rem; margin-bottom:6px; }
+select, textarea, input[type="text"], input[type="file"] { width:100%; box-sizing:border-box; padding:8px 12px; border:1px solid var(--border); border-radius:6px; background:var(--surface-alt); color:var(--text); font-family:inherit; }
+textarea { height:160px; font-family:monospace; font-size:0.85rem; resize:vertical; }
+.btn { background:var(--accent); color:var(--btn-text); border:none; padding:10px 20px; border-radius:6px; font-weight:600; cursor:pointer; font-size:0.95rem; }
+.btn:hover { background:var(--accent-hover); }
+.btn-secondary { background:var(--surface-alt); color:var(--text); border:1px solid var(--border); padding:6px 12px; border-radius:6px; cursor:pointer; font-size:0.85rem; }
+.btn-group { display:flex; gap:10px; align-items:center; margin-top:12px; }
+.badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:0.75rem; font-weight:700; }
+.badge-rank { background:#fee2e2; color:#991b1b; }
+.badge-rule { background:#e0f2fe; color:#0284c7; }
+.card { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:16px; margin-bottom:16px; box-shadow:var(--card-shadow); }
+.card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.metrics-row { display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:12px; margin-bottom:20px; }
+.metric-box { background:var(--surface); border:1px solid var(--border); padding:14px; border-radius:8px; text-align:center; }
+.metric-box span { display:block; font-size:0.75rem; color:var(--text-muted); }
+.metric-box strong { font-size:1.2rem; color:var(--accent); }
+table { width:100%; border-collapse:collapse; margin-top:10px; background:var(--surface); }
+th, td { padding:8px 12px; border:1px solid var(--border); text-align:left; font-size:0.85rem; }
+th { background:var(--surface-alt); }
+.clause-box { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px; }
+.clause-header { display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:6px; margin-bottom:8px; font-size:0.85rem; }
+.tok { border-radius:2px; padding:2px 0; }
+.export-bar { display:flex; gap:10px; margin-top:16px; flex-wrap:wrap; }
+#loading { display:none; text-align:center; padding:24px; font-weight:600; color:var(--accent); }
+footer { text-align:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); font-size:0.85rem; color:var(--text-muted); }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div>
+      <h1 style="margin:0; font-size:1.6rem;">WeirdClauses Explorer</h1>
+      <span style="font-size:0.8rem; color:var(--text-muted);">Local Offline Surprisal Engine v{{VERSION}}</span>
+    </div>
+    <button class="btn-secondary" onclick="toggleTheme()">🌓 Theme</button>
+  </header>
+
+  <div class="banner">{{LEGAL_DISCLAIMER}}</div>
+
+  <div class="controls">
+    <div class="row">
+      <div class="col">
+        <label for="sampleSelect">Load Bundled Synthetic Sample:</label>
+        <select id="sampleSelect" onchange="loadSample(this.value)">
+          <option value="">-- Choose a sample contract --</option>
+          <option value="normal_rental.txt">Normal Residential Lease</option>
+          <option value="unusual_rental.txt">Unusual Agreement (Planted Clauses)</option>
+          <option value="messy_numbering_rental.txt">Messy Numbering Agreement</option>
+        </select>
+      </div>
+      <div class="col">
+        <label for="fileUpload">Or Upload Local File (.txt, .md, .docx, .pdf):</label>
+        <input type="file" id="fileUpload" accept=".txt,.md,.docx,.pdf" onchange="handleFileUpload(this)">
+      </div>
+    </div>
+
+    <label for="contractText">Agreement Text to Analyze:</label>
+    <textarea id="contractText" placeholder="Paste lease agreement text here..."></textarea>
+
+    <div class="row" style="margin-top:12px; align-items:center;">
+      <div style="flex:1;">
+        <label for="modeSelect">Scoring Mode:</label>
+        <select id="modeSelect">
+          <option value="conditional" selected>Conditional (vs. Standard Baseline)</option>
+          <option value="raw">Raw Token Surprisal</option>
+        </select>
+      </div>
+      <div style="flex:1;">
+        <label for="aggSelect">Aggregator:</label>
+        <select id="aggSelect">
+          <option value="topq" selected>Top-Quartile Mean (topq)</option>
+          <option value="mean">Arithmetic Mean</option>
+          <option value="max">Maximum Surprisal</option>
+        </select>
+      </div>
+      <div style="margin-top:20px;">
+        <label style="cursor:pointer; display:flex; align-items:center; gap:6px;">
+          <input type="checkbox" id="mockCheck" checked> Fast Mock Mode
+        </label>
+      </div>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn" onclick="runAnalysis()">Analyze Agreement</button>
+      <span id="loading">⚡ Scoring clauses (slow and steady)...</span>
+    </div>
+  </div>
+
+  <div id="results" style="display:none;">
+    <div class="metrics-row" id="metricsBar"></div>
+
+    <h2>Read These First (Most Unusual Clauses)</h2>
+    <div id="topCards"></div>
+
+    <h2>Key Facts (Rule-Based Extraction)</h2>
+    <p style="font-size:0.85rem; color:var(--text-muted);">
+      Extracted via deterministic regex patterns; independent of language model scoring.
+    </p>
+    <table>
+      <thead><tr><th>Category</th><th>Extracted Value</th><th>Clause Location</th><th>Source</th></tr></thead>
+      <tbody id="factsBody"></tbody>
+    </table>
+
+    <h2>Full Document & Heat-Mapped Surprisal</h2>
+    <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">
+      Darker red highlight = higher surprisal (-log2 p). Underlined spans = rule-based facts.
+    </div>
+    <div id="clausesContainer"></div>
+
+    <div class="export-bar">
+      <button class="btn-secondary" onclick="exportData('html')">📥 Download HTML Report</button>
+      <button class="btn-secondary" onclick="exportData('md')">📥 Download Markdown</button>
+      <button class="btn-secondary" onclick="exportData('json')">📥 Download JSON</button>
+    </div>
+  </div>
+
+  <footer>
+    <div class="banner">{{LEGAL_DISCLAIMER}}</div>
+    WeirdClauses - Privacy-first, local contract surprisal analysis. Zero document text leaves the machine.
+  </footer>
+</div>
+
+<script>
+let currentReport = null;
+
+function toggleTheme() {
+  const cur = document.documentElement.getAttribute('data-theme') ||
+    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', cur === 'dark' ? 'light' : 'dark');
+}
+
+async function loadSample(name) {
+  if (!name) return;
+  const res = await fetch('/api/samples/' + encodeURIComponent(name));
+  if (res.ok) {
+    const data = await res.json();
+    document.getElementById('contractText').value = data.text;
+  }
+}
+
+function handleFileUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('contractText').value = e.target.result;
+  };
+  reader.readAsText(file);
+}
+
+async function runAnalysis() {
+  const text = document.getElementById('contractText').value.trim();
+  if (!text) { alert('Please enter or select agreement text first.'); return; }
+
+  const loading = document.getElementById('loading');
+  loading.style.display = 'inline';
+  document.getElementById('results').style.display = 'none';
+
+  try {
+    const payload = {
+      text: text,
+      mode: document.getElementById('modeSelect').value,
+      aggregator: document.getElementById('aggSelect').value,
+      mock: document.getElementById('mockCheck').checked
+    };
+    const res = await fetch('/api/analyze', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error(await res.text());
+    currentReport = await res.json();
+    renderReport(currentReport);
+  } catch (err) {
+    alert('Analysis failed: ' + err.message);
+  } finally {
+    loading.style.display = 'none';
+  }
+}
+
+function renderReport(rep) {
+  document.getElementById('results').style.display = 'block';
+  const m = rep.summary;
+  document.getElementById('metricsBar').innerHTML = `
+    <div class="metric-box"><span>Scored Clauses</span><strong>${m.scored_clauses} / ${m.total_clauses}</strong></div>
+    <div class="metric-box"><span>Key Facts</span><strong>${m.key_facts_count}</strong></div>
+    <div class="metric-box"><span>Mean Surprisal</span><strong>${m.mean_score ? m.mean_score.toFixed(2) + ' b' : '-'}</strong></div>
+    <div class="metric-box"><span>Max Anomaly</span><strong>${m.max_score ? m.max_score.toFixed(2) + ' b' : '-'}</strong></div>
+  `;
+
+  const scored = rep.clauses.filter(c => c.score !== null).sort((a,b) => b.score - a.score);
+  const topCount = Math.max(1, Math.ceil(scored.length * 0.25));
+  document.getElementById('topCards').innerHTML = scored.slice(0, topCount).map(c => {
+    const near = c.nearest_matches[0] || {};
+    const gainStr = c.gain !== null ? (c.gain >= 0 ? '+' : '') + c.gain.toFixed(2) + ' b' : '-';
+    return `<div class="card">
+      <div class="card-header">
+        <div><span class="badge badge-rank">Rank #${c.rank}</span> <strong>${c.parent_heading || 'Clause ' + c.id}</strong></div>
+        <div>Score: <strong>${c.score.toFixed(2)} bits</strong> (Z: ${c.z_score >= 0 ? '+' : ''}${c.z_score.toFixed(2)} | Gain: ${gainStr})</div>
+      </div>
+      <p style="font-family:Georgia,serif; margin:8px 0;">${c.content || c.text}</p>
+      <div style="font-size:0.82rem; color:var(--text-muted);">Nearest standard: ${near.title || '-'} (similarity: ${near.similarity ? near.similarity.toFixed(2) : '-'})</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('factsBody').innerHTML = (rep.key_facts.length ? rep.key_facts.map(f => `
+    <tr>
+      <td><span class="badge" style="background:var(--surface-alt);">${f.kind}</span></td>
+      <td><strong>${f.value}</strong></td>
+      <td>Clause #${f.clause_id}</td>
+      <td><span class="badge badge-rule">${f.source_label}</span></td>
+    </tr>
+  `).join('') : '<tr><td colspan="4">No facts extracted</td></tr>');
+
+  document.getElementById('clausesContainer').innerHTML = rep.clauses.map(c => {
+    if (c.kind === 'heading') return `<h3 style="color:var(--accent); margin-top:20px;">${c.text}</h3>`;
+    if (c.kind === 'frame') return `<div style="font-style:italic; color:var(--text-muted); margin:8px 0;">${c.text}</div>`;
+    const tokensHtml = renderHeatMap(c);
+    const scoreText = c.score !== null ? `Score: <strong>${c.score.toFixed(2)} bits</strong> | Z: ${c.z_score >= 0 ? '+' : ''}${c.z_score.toFixed(2)}` : '';
+    return `<div class="clause-box">
+      <div class="clause-header">
+        <div><span class="badge badge-rank">Rank #${c.rank || '-'}</span> <strong>${c.parent_heading || ''}</strong></div>
+        <div>${scoreText}</div>
+      </div>
+      <div style="font-family:monospace; line-height:1.7;">${tokensHtml}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderHeatMap(clause) {
+  const text = clause.text;
+  const tokens = clause.tokens || [];
+  const facts = clause.facts || [];
+  const cStart = clause.start;
+  if (!tokens.length) return escapeHtml(text);
+
+  tokens.sort((a,b) => a.start - b.start);
+  let out = '';
+  let curr = cStart;
+
+  for (const t of tokens) {
+    if (t.start > curr) out += escapeHtml(text.slice(curr - cStart, t.start - cStart));
+    const alpha = Math.min(0.85, Math.max(0.08, (t.bits - 2.5) / 12.0));
+    const inside = facts.find(f => Math.max(t.start, f.start) < Math.min(t.end, f.end));
+    const factStyle = inside ? 'border-bottom:2px solid var(--accent);' : '';
+    const factHint = inside ? ` | [rule-based: ${inside.kind}]` : '';
+    const style = `background-color:rgba(239, 68, 68, ${alpha.toFixed(2)}); ${factStyle}`;
+    const tokText = escapeHtml(text.slice(t.start - cStart, t.end - cStart));
+    out += `<span class="tok" style="${style}" title="${t.bits.toFixed(2)} bits${factHint}">${tokText}</span>`;
+    curr = Math.max(curr, t.end);
+  }
+  if (curr < clause.end) out += escapeHtml(text.slice(curr - cStart));
+  return out;
+}
+
+function escapeHtml(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+async function exportData(fmt) {
+  if (!currentReport) return;
+  const res = await fetch('/api/export?format=' + fmt, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(currentReport)
+  });
+  const blob = await res.blob();
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `weirdclauses_report.${fmt}`;
+  a.click();
+}
+</script>
+</body>
+</html>

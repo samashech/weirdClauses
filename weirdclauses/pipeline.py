@@ -6,6 +6,8 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 
+from rich.table import Table
+
 from weirdclauses.baseline import get_baseline_pack
 from weirdclauses.facts import ExtractedFact, attach_facts_to_clauses
 from weirdclauses.ingest import load_text
@@ -69,3 +71,60 @@ def run_pipeline(
         mode=scoring_mode,
         aggregator=aggregator,
     )
+
+
+def create_ranking_table(res: PipelineResult, top: int) -> tuple[Table, int]:
+    """Create Rich table displaying full clause ranking."""
+    title = (
+        f"WeirdClauses Ranking ({len(res.scored_clauses)} clauses "
+        f"| Mode: {res.mode} | Agg: {res.aggregator})"
+    )
+    table = Table(title=title, show_lines=True)
+    table.add_column("Rank", style="bold cyan", justify="right", width=5)
+    table.add_column("Score (bits)", justify="right", style="bold green", width=12)
+    table.add_column("Z-Score", justify="right", style="bold yellow", width=8)
+    if res.mode == "conditional":
+        table.add_column("Gain", justify="right", style="bold magenta", width=7)
+    table.add_column("Sim", justify="right", width=6)
+    table.add_column("Nearest Match", style="cyan", width=20)
+    table.add_column("Section / Heading", style="bold magenta", width=22)
+    table.add_column("Clause Snippet", ratio=1)
+
+    display_count = min(top, len(res.scored_clauses))
+    for rank, sc in enumerate(res.scored_clauses[:display_count], start=1):
+        heading = sc.clause.parent_heading or "(No heading)"
+        m_title = sc.nearest_matches[0].clause.title if sc.nearest_matches else "-"
+        sim_str = f"{sc.nearest_similarity:.2f}" if sc.nearest_similarity is not None else "-"
+        snippet = (
+            sc.clause.content[:117] + "..." if len(sc.clause.content) > 120 else sc.clause.content
+        )
+        row = [str(rank), f"{sc.score:.2f}", f"{sc.z_score:+.2f}"]
+        if res.mode == "conditional":
+            row.append(f"{sc.gain:+.2f}" if sc.gain is not None else "-")
+        row.extend([sim_str, m_title, heading, snippet])
+        table.add_row(*row)
+
+    return table, display_count
+
+
+def create_top_anomalies_table(res: PipelineResult, top_limit: int) -> Table:
+    """Create Rich table displaying top anomaly summary cards."""
+    num_scored = len(res.scored_clauses)
+    top_table = Table(
+        title=f"Top Unusual Clauses (Read These First — Top {top_limit} of {num_scored})",
+        show_lines=True,
+    )
+    top_table.add_column("Rank", justify="right", style="bold cyan", width=5)
+    top_table.add_column("Score", justify="right", style="bold green", width=10)
+    top_table.add_column("Z-Score", justify="right", style="bold yellow", width=8)
+    top_table.add_column("Nearest Standard", style="cyan", width=24)
+    top_table.add_column("Clause Snippet", ratio=1)
+
+    for rank, sc in enumerate(res.scored_clauses[:top_limit], start=1):
+        m_title = sc.nearest_matches[0].clause.title if sc.nearest_matches else "-"
+        snippet = (
+            sc.clause.content[:100] + "..." if len(sc.clause.content) > 100 else sc.clause.content
+        )
+        top_table.add_row(str(rank), f"{sc.score:.2f} b", f"{sc.z_score:+.2f}", m_title, snippet)
+
+    return top_table
