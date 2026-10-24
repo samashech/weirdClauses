@@ -1,12 +1,17 @@
-"""Scoring and aggregation module for token surprisal values."""
+"""Scoring and aggregation module supporting raw and baseline-conditional surprisal."""
 
 from __future__ import annotations
 
 import math
 from collections.abc import Callable, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import Literal
 
+from weirdclauses.baseline import BaselineMatch, BaselinePack, FakeBaselinePack
+from weirdclauses.lm import SurprisalEngine
 from weirdclauses.segment import Clause
+
+ScoringMode = Literal["raw", "conditional"]
 
 
 @dataclass
@@ -15,6 +20,11 @@ class ScoredClause:
     score: float
     z_score: float
     token_count: int
+    raw_surprisal: float | None = None
+    conditional_surprisal: float | None = None
+    nearest_similarity: float | None = None
+    gain: float | None = None
+    nearest_matches: list[BaselineMatch] = field(default_factory=list)
 
 
 def aggregate_mean(values: Sequence[float]) -> float:
@@ -62,25 +72,47 @@ def z_normalize(scores: Sequence[float]) -> list[float]:
     return [(x - mean) / std for x in scores]
 
 
+def build_conditional_prompt(
+    clause_text: str,
+    matches: Sequence[BaselineMatch],
+    max_neighbour_chars: int = 1200,
+) -> tuple[str, int]:
+    """Build conditional prompt with standard baseline neighbours and return clause start index."""
+    lines = ["Standard clauses of this type:"]
+    budget = max_neighbour_chars
+    for m in matches:
+        text = m.clause.text.strip()
+        if len(text) > budget:
+            text = text[:budget] + "..."
+        lines.append(f"- {text}")
+        budget -= len(text)
+        if budget <= 100:
+            break
+
+    lines.extend(["", "Clause under review:", ""])
+    prefix = "\n".join(lines)
+    full_prompt = prefix + clause_text.strip()
+    clause_char_start = len(prefix)
+    return full_prompt, clause_char_start
+
+
 def score_clauses(
     clauses: Sequence[Clause],
     token_surprisals: Sequence[tuple[int, int, float]],
     aggregator: str = "topq",
+    mode: ScoringMode = "raw",
+    baseline_pack: BaselinePack | FakeBaselinePack | None = None,
+    engine: SurprisalEngine | None = None,
+    k_nearest: int = 3,
 ) -> list[ScoredClause]:
-    """Aggregate token surprisals into scored clauses and rank by weirdness.
-
-    Only clauses with kind == 'clause' are scored. Headings and frames are excluded.
-    Token surprisals are mapped to clauses by character span midpoint.
-    """
+    """Score clauses in raw or conditional mode and rank descending by weirdness."""
     agg_fn = AGGREGATORS.get(aggregator.lower())
     if agg_fn is None:
         valid = ", ".join(repr(k) for k in ("mean", "topq", "max"))
         raise ValueError(f"Unknown aggregator '{aggregator}'. Valid options are: {valid}")
 
-    # Map each clause id to its assigned token surprisals
+    # Map raw token surprisals to clause spans via token midpoint
     clause_tokens: dict[int, list[float]] = {c.id: [] for c in clauses if c.kind == "clause"}
-
-    # Assign token surprisals to clause spans via token midpoint
     for t_start, t_end, bits in token_surprisals:
         mid = (t_start + t_end) // 2
         for c in clauses:
@@ -88,30 +120,55 @@ def score_clauses(
                 clause_tokens[c.id].append(bits)
                 break
 
-    # Calculate raw aggregation score for each scored clause
-    scored_list: list[tuple[Clause, float, int]] = []
+    scored_items: list[ScoredClause] = []
+
     for c in clauses:
         if c.kind != "clause":
             continue
-        scores = clause_tokens.get(c.id, [])
-        score = agg_fn(scores) if scores else 0.0
-        scored_list.append((c, score, len(scores)))
 
-    # Compute z-scores across all evaluated clauses in the document
-    raw_scores = [s for _, s, _ in scored_list]
-    z_scores = z_normalize(raw_scores)
+        raw_bits = clause_tokens.get(c.id, [])
+        raw_score = round(agg_fn(raw_bits) if raw_bits else 0.0, 4)
 
-    results: list[ScoredClause] = []
-    for (clause, score, count), z in zip(scored_list, z_scores, strict=True):
-        results.append(
+        # Retrieve nearest standard clauses from baseline pack
+        matches: list[BaselineMatch] = []
+        if baseline_pack is not None:
+            matches = baseline_pack.retrieve_nearest(c.content, k=k_nearest)
+
+        nearest_sim = matches[0].similarity if matches else None
+        cond_score: float | None = None
+        gain: float | None = None
+
+        if mode == "conditional" and engine is not None and matches:
+            prompt, c_start = build_conditional_prompt(c.content, matches)
+            cond_tokens = engine.token_surprisals(prompt)
+            target_bits = [bits for s, _, bits in cond_tokens if s >= c_start]
+            cond_score = round(agg_fn(target_bits) if target_bits else raw_score, 4)
+            gain = round(raw_score - cond_score, 4)
+
+        if mode == "conditional" and cond_score is not None:
+            primary_score = cond_score
+        else:
+            primary_score = raw_score
+        scored_items.append(
             ScoredClause(
-                clause=clause,
-                score=round(score, 4),
-                z_score=round(z, 4),
-                token_count=count,
+                clause=c,
+                score=primary_score,
+                z_score=0.0,  # Computed below
+                token_count=len(raw_bits),
+                raw_surprisal=raw_score,
+                conditional_surprisal=cond_score,
+                nearest_similarity=nearest_sim,
+                gain=gain,
+                nearest_matches=matches,
             )
         )
 
-    # Rank descending by score (most surprising first)
-    results.sort(key=lambda sc: sc.score, reverse=True)
-    return results
+    # Compute z-scores across all evaluated clauses in document
+    scores = [item.score for item in scored_items]
+    z_scores = z_normalize(scores)
+    for item, z in zip(scored_items, z_scores, strict=True):
+        item.z_score = round(z, 4)
+
+    # Rank descending by primary score
+    scored_items.sort(key=lambda item: item.score, reverse=True)
+    return scored_items

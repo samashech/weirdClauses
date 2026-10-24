@@ -13,6 +13,7 @@ from rich.progress import BarColumn, Progress, SpinnerColumn, TaskProgressColumn
 from rich.table import Table
 
 from weirdclauses import LEGAL_DISCLAIMER, __version__
+from weirdclauses.baseline import get_baseline_pack
 from weirdclauses.config import settings
 from weirdclauses.ingest import load_text
 from weirdclauses.lm import get_surprisal_engine
@@ -88,70 +89,61 @@ def doctor() -> None:
     table.add_column("Status", style="bold")
     table.add_column("Details")
 
-    all_critical_ok = True
-
-    py_ver = sys.version_info
-    py_ver_str = f"{py_ver.major}.{py_ver.minor}.{py_ver.micro}"
-    if py_ver >= (3, 11):
-        table.add_row("Python Version", "[green]PASS[/green]", f"{py_ver_str} (>= 3.11 required)")
-    else:
-        table.add_row("Python Version", "[red]FAIL[/red]", f"{py_ver_str} (requires >= 3.11)")
-        all_critical_ok = False
+    all_ok = True
+    py_ver = f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
+    table.add_row("Python Version", "[green]PASS[/green]", f"{py_ver} (>= 3.11)")
 
     try:
         import torch
 
-        torch_ver = torch.__version__
-        cuda_avail = torch.cuda.is_available()
+        cuda = torch.cuda.is_available()
         table.add_row(
             "PyTorch",
             "[green]PASS[/green]",
-            f"v{torch_ver} (CUDA available: {cuda_avail}, configured device: {settings.device})",
+            f"v{torch.__version__} (CUDA: {cuda}, {settings.device})",
         )
-    except ImportError as exc:
-        table.add_row("PyTorch", "[red]FAIL[/red]", f"Cannot import torch: {exc}")
-        all_critical_ok = False
+    except ImportError as e:
+        table.add_row("PyTorch", "[red]FAIL[/red]", str(e))
+        all_ok = False
 
     try:
         import transformers
 
         table.add_row("Transformers", "[green]PASS[/green]", f"v{transformers.__version__}")
-    except ImportError as exc:
-        table.add_row("Transformers", "[red]FAIL[/red]", f"Cannot import transformers: {exc}")
-        all_critical_ok = False
+    except ImportError as e:
+        table.add_row("Transformers", "[red]FAIL[/red]", str(e))
+        all_ok = False
 
-    cache_ok, cache_msg = _check_cache_dir(settings.cache_dir)
+    c_ok, c_msg = _check_cache_dir(settings.cache_dir)
+    table.add_row("Cache Directory", "[green]PASS[/green]" if c_ok else "[red]FAIL[/red]", c_msg)
+    all_ok = all_ok and c_ok
+
+    lm_ok, lm_msg = _check_model_cached(settings.lm_model)
     table.add_row(
-        "Cache Directory",
-        "[green]PASS[/green]" if cache_ok else "[red]FAIL[/red]",
-        cache_msg,
+        f"LM ({settings.lm_model})",
+        "[green]CACHED[/green]" if lm_ok else "[yellow]NOT DOWNLOADED[/yellow]",
+        lm_msg,
     )
-    if not cache_ok:
-        all_critical_ok = False
 
-    lm_cached, lm_msg = _check_model_cached(settings.lm_model)
-    lm_status = "[green]CACHED[/green]" if lm_cached else "[yellow]NOT DOWNLOADED[/yellow]"
-    table.add_row(f"LM Model ({settings.lm_model})", lm_status, lm_msg)
-
-    embed_cached, embed_msg = _check_model_cached(settings.embed_model)
-    embed_status = "[green]CACHED[/green]" if embed_cached else "[yellow]NOT DOWNLOADED[/yellow]"
-    table.add_row(f"Embed Model ({settings.embed_model})", embed_status, embed_msg)
-
-    baseline_status = (
-        "[green]FOUND[/green]" if settings.baseline_dir.exists() else "[yellow]MISSING[/yellow]"
+    em_ok, em_msg = _check_model_cached(settings.embed_model)
+    table.add_row(
+        f"Embed ({settings.embed_model})",
+        "[green]CACHED[/green]" if em_ok else "[yellow]NOT DOWNLOADED[/yellow]",
+        em_msg,
     )
-    table.add_row("Baseline Pack Dir", baseline_status, str(settings.baseline_dir))
+
+    b_ok = settings.baseline_dir.exists()
+    table.add_row(
+        "Baseline Dir",
+        "[green]FOUND[/green]" if b_ok else "[yellow]MISSING[/yellow]",
+        str(settings.baseline_dir),
+    )
 
     console.print(table)
-    if not all_critical_ok:
-        console.print("[bold red]Critical environment checks failed. Please see above.[/bold red]")
+    if not all_ok:
+        console.print("[bold red]Critical environment checks failed.[/bold red]")
         raise typer.Exit(code=1)
-
-    console.print(
-        "[bold green]System is ready.[/bold green] "
-        "Models not cached yet will be fetched on first run, "
-        "or run with [bold cyan]--mock[/bold cyan] for instant offline execution."
-    )
+    console.print("[bold green]System is ready.[/bold green]")
 
 
 @app.command()
@@ -160,6 +152,9 @@ def score(
     aggregator: Annotated[
         str, typer.Option("--aggregator", "-a", help="Aggregator: mean, topq, max")
     ] = "topq",
+    mode: Annotated[
+        str, typer.Option("--mode", "-m", help="Mode: 'raw' or 'conditional'")
+    ] = "conditional",
     top: Annotated[int, typer.Option("--top", "-n", help="Top clauses to show")] = 10,
     mock: Annotated[bool, typer.Option("--mock", help="Use deterministic FakeLM")] = False,
     device: Annotated[str | None, typer.Option("--device", "-d", help="Device (cpu, cuda)")] = None,
@@ -173,6 +168,8 @@ def score(
         )
     )
 
+    scoring_mode = "conditional" if mode.lower() in ("conditional", "cond") else "raw"
+
     with Progress(
         SpinnerColumn(),
         TextColumn("[progress.description]{task.description}"),
@@ -180,7 +177,7 @@ def score(
         TaskProgressColumn(),
         console=console,
     ) as progress:
-        task = progress.add_task("[cyan]Ingesting document...", total=3)
+        task = progress.add_task("[cyan]Ingesting document...", total=4)
         text = load_text(file)
         progress.advance(task)
 
@@ -188,39 +185,53 @@ def score(
         clauses = segment_clauses(text)
         progress.advance(task)
 
-        progress.update(task, description="[cyan]Computing token surprisal (slow & steady)...")
-        engine = get_surprisal_engine(mock=mock, device=device)
-        surprisals = engine.token_surprisals(text)
+        progress.update(task, description="[cyan]Loading baseline standard pack...")
+        baseline_pack = get_baseline_pack(mock=mock)
         progress.advance(task)
 
-    scored = score_clauses(clauses, surprisals, aggregator=aggregator)
-    total_clauses = len([c for c in clauses if c.kind == "clause"])
+        progress.update(task, description=f"[cyan]Scoring ({scoring_mode} mode, slow & steady)...")
+        engine = get_surprisal_engine(mock=mock, device=device)
+        surprisals = engine.token_surprisals(text)
+        scored = score_clauses(
+            clauses,
+            surprisals,
+            aggregator=aggregator,
+            mode=scoring_mode,
+            baseline_pack=baseline_pack,
+            engine=engine,
+        )
+        progress.advance(task)
 
-    table = Table(
-        title=f"WeirdClauses Ranking ({total_clauses} clauses | Aggregator: {aggregator})",
-        show_lines=True,
+    total_clauses = len([c for c in clauses if c.kind == "clause"])
+    title = (
+        f"WeirdClauses Ranking ({total_clauses} clauses | Mode: {scoring_mode} | Agg: {aggregator})"
     )
+    table = Table(title=title, show_lines=True)
     table.add_column("Rank", style="bold cyan", justify="right", width=5)
     table.add_column("Score (bits)", justify="right", style="bold green", width=12)
     table.add_column("Z-Score", justify="right", style="bold yellow", width=8)
-    table.add_column("Tokens", justify="right", width=6)
+    if scoring_mode == "conditional":
+        table.add_column("Gain", justify="right", style="bold magenta", width=7)
+    table.add_column("Sim", justify="right", width=6)
+    table.add_column("Nearest Match", style="cyan", width=20)
     table.add_column("Section / Heading", style="bold magenta", width=22)
     table.add_column("Clause Snippet", ratio=1)
 
     display_count = min(top, len(scored))
     for rank, sc in enumerate(scored[:display_count], start=1):
         heading = sc.clause.parent_heading or "(No heading)"
+        match_title = sc.nearest_matches[0].clause.title if sc.nearest_matches else "-"
+        sim_str = f"{sc.nearest_similarity:.2f}" if sc.nearest_similarity is not None else "-"
         snippet = sc.clause.content
         if len(snippet) > 120:
             snippet = snippet[:117] + "..."
-        table.add_row(
-            str(rank),
-            f"{sc.score:.2f}",
-            f"{sc.z_score:+.2f}",
-            str(sc.token_count),
-            heading,
-            snippet,
-        )
+
+        row = [str(rank), f"{sc.score:.2f}", f"{sc.z_score:+.2f}"]
+        if scoring_mode == "conditional":
+            gain_str = f"{sc.gain:+.2f}" if sc.gain is not None else "-"
+            row.append(gain_str)
+        row.extend([sim_str, match_title, heading, snippet])
+        table.add_row(*row)
 
     console.print(table)
     console.print(
