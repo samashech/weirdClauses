@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import re
+
 from typer.testing import CliRunner
 
 from weirdclauses import LEGAL_DISCLAIMER, __version__
@@ -16,32 +18,40 @@ from weirdclauses.scoring import (
 )
 
 
+def _strip_ansi(text: str) -> str:
+    """Strip ANSI escape sequences from terminal output."""
+    return re.sub(r"\x1b\[[0-9;]*[a-zA-Z]", "", text)
+
+
 def test_cli_version(cli_runner: CliRunner) -> None:
     """Verify --version returns package version and legal disclaimer."""
     result = cli_runner.invoke(app, ["--version"])
     assert result.exit_code == 0
-    assert __version__ in result.stdout
-    assert "NOT legal advice" in result.stdout
+    clean = _strip_ansi(result.stdout)
+    assert __version__ in clean
+    assert "NOT legal advice" in clean
 
 
 def test_cli_doctor(cli_runner: CliRunner) -> None:
     """Verify weirdclauses doctor runs offline, checks system, and exits 0."""
     result = cli_runner.invoke(app, ["doctor"])
     assert result.exit_code == 0
-    assert "Legal Disclaimer" in result.stdout
-    assert "Python Version" in result.stdout
-    assert "PyTorch" in result.stdout
-    assert "Cache Directory" in result.stdout
-    assert "System is ready" in result.stdout
+    clean = _strip_ansi(result.stdout)
+    assert "Legal Disclaimer" in clean
+    assert "Python Version" in clean
+    assert "PyTorch" in clean
+    assert "Cache Directory" in clean
+    assert "System is ready" in clean
 
 
 def test_cli_doctor_mock(cli_runner: CliRunner) -> None:
     """Verify weirdclauses doctor --mock indicates mock mode enabled."""
     result = cli_runner.invoke(app, ["doctor", "--mock"])
     assert result.exit_code == 0
-    assert "Mock Mode" in result.stdout
-    assert "ENABLED" in result.stdout
-    assert "System is ready" in result.stdout
+    clean = _strip_ansi(result.stdout)
+    assert "Mock Mode" in clean
+    assert "ENABLED" in clean
+    assert "System is ready" in clean
 
 
 def test_legal_disclaimer_constant() -> None:

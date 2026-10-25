@@ -11,12 +11,14 @@ from typer.testing import CliRunner
 # Ensure offline mock mode for tests by default
 os.environ["WC_MOCK"] = "1"
 os.environ["WC_CACHE_DIR"] = "/tmp/weirdclauses_test_cache"
+os.environ["NO_COLOR"] = "1"
+os.environ.pop("FORCE_COLOR", None)
 
 
 @pytest.fixture
 def cli_runner() -> CliRunner:
     """Fixture providing Typer CLI test runner."""
-    return CliRunner()
+    return CliRunner(env={"NO_COLOR": "1"})
 
 
 @pytest.fixture

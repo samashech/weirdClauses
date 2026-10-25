@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 import threading
 import urllib.error
 import urllib.request
@@ -186,12 +187,13 @@ def test_export_endpoint(web_server_url: str) -> None:
 def test_cli_serve_help() -> None:
     """weirdclauses serve --help displays arguments and options."""
     runner = CliRunner()
-    result = runner.invoke(app, ["serve", "--help"])
+    result = runner.invoke(app, ["serve", "--help"], env={"NO_COLOR": "1"})
     assert result.exit_code == 0
-    assert "--host" in result.stdout
-    assert "--port" in result.stdout
-    assert "--mock" in result.stdout
-    assert "--open" in result.stdout
+    clean_out = re.sub(r"\x1b\[[0-9;]*[a-zA-Z]", "", result.stdout)
+    assert "--host" in clean_out
+    assert "--port" in clean_out
+    assert "--mock" in clean_out
+    assert "--open" in clean_out
 
 
 def test_upload_disabled_in_demo(web_server_url: str) -> None:
