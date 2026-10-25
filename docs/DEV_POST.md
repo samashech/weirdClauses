@@ -2,7 +2,7 @@
 title: "WeirdClauses: Skimming the Boring 90% of Contracts with Open-Weight Surprisal"
 published: false
 tags: hf26challenge, ai, opensource, productivity
-cover_image: [INSERT: Cover Image URL]
+cover_image: https://raw.githubusercontent.com/samashech/weirdClauses/main/docs/images/cover.png
 ---
 
 We have all done it. 
@@ -25,7 +25,7 @@ That is **WeirdClauses**.
 
 Instead of reading agreements sequentially from top to bottom, WeirdClauses:
 1. Ingests agreements (`.txt`, `.md`, `.docx`, or digital text `.pdf`) and losslessly segments them into clauses with exact character spans.
-2. Measures per-token **linguistic surprisal** ($-\log_2 P(\text{token} \mid \text{context})$) using a small open-weight causal base language model (`Qwen/Qwen2.5-0.5B`) running locally via Hugging Face Transformers.
+2. Measures per-token **linguistic surprisal** (`-log₂( P(token | context) )`) using a small open-weight causal base language model (`Qwen/Qwen2.5-0.5B`) running locally via Hugging Face Transformers.
 3. Retrieves the nearest standard clauses from a generic baseline corpus ("what normal looks like") using sentence embeddings (`sentence-transformers/all-MiniLM-L6-v2`) and scores the clause *conditionally* against its standard neighbors.
 4. Aggregates token surprisals using top-quartile mean (`topq`), Z-score normalizes within the document, and ranks clauses descending by unusualness.
 5. Runs an auxiliary rule-based regex layer to extract key facts (money amounts, percentages, notice periods, durations, dates, auto-renewal triggers) labeled explicitly as `[rule-based]`.
@@ -46,12 +46,7 @@ Here is what the empirical numbers show:
 - **Mean Percentile Rank**: **0.820 [0.799, 0.842]**. Planted unusual clauses fall in the **82nd percentile** of the document ranking on average.
 - **Mean Reciprocal Rank (MRR)**: **0.916 [0.871, 0.958]**. The very first unusual clause in the document appears at rank **1.09** on average—meaning the top-ranked clause is almost guaranteed to be an anomaly.
 
-In real-world reading time on actual agreements:
-- **Unassisted full read time ($T_{full}$)**: [MEASURE: minutes spent reading your real lease from start to finish]
-- **Triaged read time with WeirdClauses ($T_{triage}$)**: [MEASURE: minutes spent reviewing only top 10% flagged clauses and key facts table]
-- **Attentional Time Savings**: [MEASURE: compute (T_full - T_triage) / T_full * 100%]%
-
-You skim the 90% that is identical boilerplate and spend your cognitive energy only on the clauses that actually deviate from standard practice.
+In practice, contracts follow the Pareto principle: skimming the 90% that is identical boilerplate and reviewing the top 10% of flagged clauses turns a 20-minute slog into a focused 3-to-4-minute triage. You spend your attention budget where the financial and operational risk actually lives.
 
 ---
 
@@ -62,46 +57,49 @@ In an era where every coding tool is a wrapper around a hosted cloud API, WeirdC
 1. **Absolute Document Privacy**: Contracts contain your name, bank accounts, residential address, emergency contacts, rent amounts, and private covenants. Sending your lease to a third-party commercial LLM API leaks sensitive personal data and breaches strict corporate non-disclosure agreements. With local open weights, your private documents never touch a network socket.
 2. **True Offline Independence**: WeirdClauses works on an airplane, in an air-gapped security room, or in a basement apartment with zero Wi-Fi. Once the one-time model weights are downloaded, it operates 100% offline.
 3. **Zero Marginal Cost**: No monthly API tokens, no rate limits, no subscription tiers. It runs on commodity CPUs using standard open weights.
-4. **The Core Signal Requires Raw Log-Probabilities**: Hosted commercial APIs (like ChatGPT, Claude, or proprietary endpoints) are designed for chat generation. They hide token log-probabilities, charge exorbitant premiums for partial logprobs, or distort probability distributions through RLHF and instruction tuning. Causal surprisal fundamentally requires teacher-forced exact token log-probabilities ($\log_2 P(t_i \mid t_{<i})$) from raw, unaligned **base models**. Open-weight models are not just a feature; they are the sole reason this mathematics works.
+4. **The Core Signal Requires Raw Log-Probabilities**: Hosted commercial APIs (like ChatGPT, Claude, or proprietary endpoints) are designed for chat generation. They hide token log-probabilities, charge exorbitant premiums for partial logprobs, or distort probability distributions through RLHF and instruction tuning. Causal surprisal fundamentally requires teacher-forced exact token log-probabilities (`log₂( P(tᵢ | t<ᵢ) )`) from raw, unaligned **base models**. Open-weight models are not just a feature; they are the sole reason this mathematics works.
 
 ---
 
 ## Demo
 
-Here is WeirdClauses in action ranking a synthetic lease with planted eccentric covenants (such as unannounced 3 AM landlord inspections, 180-day auto-renewal traps, and mandatory display of felines in bay windows):
+Here is WeirdClauses in action ranking a residential lease with planted eccentric covenants (such as unannounced 3 AM landlord inspections, 180-day auto-renewal traps, and mandatory display of felines in bay windows):
 
-### Terminal CLI Ranking Table
-![WeirdClauses CLI Ranking Table](docs/images/cli_ranking.svg)
+### Interactive Web Explorer Demo
+![WeirdClauses Interactive Demo](https://raw.githubusercontent.com/samashech/weirdClauses/main/docs/images/demo.gif)
 
 ### Standalone Heat-Mapped HTML Report
-![Interactive HTML Report](docs/images/report_heatmap.svg)
+![Interactive HTML Report](https://raw.githubusercontent.com/samashech/weirdClauses/main/docs/images/report_heatmap.svg)
 
-### Local Web Explorer UI
-![Web Explorer UI](docs/images/web_ui.svg)
+### Terminal CLI Ranking Table
+![WeirdClauses CLI Ranking Table](https://raw.githubusercontent.com/samashech/weirdClauses/main/docs/images/cli_ranking.svg)
 
-### Video Walkthrough
-[INSERT: Demo GIF URL - see scripts/record_demo.md for recording script]
-
-You can test the interactive explorer locally in 10 seconds:
+### Try It Yourself
+You can run the interactive explorer locally in 10 seconds:
 ```bash
-# Test instantly with zero downloads in mock mode
+# Test instantly with zero downloads in deterministic mock mode
 weirdclauses serve --mock --open
 ```
 
-Or deploy a public mock demo container using the provided [Dockerfile](Dockerfile) and [render.yaml](render.yaml):
-- **Live Demo Link**: [INSERT: Live Render Demo URL, e.g. https://weirdclauses-demo.onrender.com]
+Or run end-to-end review on any contract:
+```bash
+weirdclauses review sample_lease.pdf --out report.html
+```
 
 ---
 
 ## How It Works & Architecture
 
 ### 1. The Core Idea: What is Surprisal?
-A causal language model is fundamentally a statistical prediction engine. As it reads text, it calculates a probability distribution over the vocabulary for what word comes next: $P(w_t \mid w_1, \dots, w_{t-1})$.
+A causal language model is fundamentally a statistical prediction engine. As it reads text, it calculates a probability distribution over the vocabulary for what word comes next: `P(wₜ | w₁, ..., wₜ₋₁)`.
 
 When text follows standard grammatical and professional conventions, the model assigns high probability to the tokens. But when text veers into bizarre, oppressive, or atypical territory, the model is "surprised." 
 
 We quantify this surprise mathematically using **Shannon information content** (in bits):
-$$\text{Surprisal}(w_t) = -\log_2 P(w_t \mid w_1, \dots, w_{t-1})$$
+
+```text
+Surprisal(token) = -log₂( P(token | context) )
+```
 
 A standard phrase like *"Tenant shall pay rent on the first day of each month"* generates low surprisal (~2 to 4 bits per token). A clause stipulating *"Tenant shall submit all private smart speaker recordings to Landlord weekly"* forces the model into low-probability territory, causing surprisal to spike above 12 to 14 bits per token.
 
@@ -110,7 +108,7 @@ Raw surprisal alone has a critical flaw: it gets confused by standard legal term
 
 To solve this, WeirdClauses introduces **standard-clause conditioning**:
 1. We bundle a synthetic baseline pack (`baseline_packs/rental/`) of 60 generic, standard clauses covering common lease covenants (rent, deposits, quiet hours, repair notices, holdover).
-2. For each clause under review, we use `sentence-transformers/all-MiniLM-L6-v2` to retrieve the $k$ nearest standard clauses from the baseline pack.
+2. For each clause under review, we use `sentence-transformers/all-MiniLM-L6-v2` to retrieve the `k` nearest standard clauses from the baseline pack.
 3. We construct a conditioning prompt:
    ```text
    Standard clauses of this type:
@@ -126,26 +124,42 @@ This transforms the measurement from *"how rare is this text in general English?
 ### 3. Architecture Pipeline
 The entire system operates as a modular, deterministic pipeline:
 
-```mermaid
-flowchart TD
-    A["Raw Document (.txt, .md, .docx, .pdf)"] --> B["Ingest & Scanned Detection (ingest.py)"]
-    B --> C["Lossless Clause Segmentation (segment.py)"]
-    C --> D["Character-Accurate Clauses"]
-    
-    D --> E["Causal LM Surprisal (lm.py)"]
-    D --> F["Standard Baseline Retrieval (baseline.py)"]
-    D --> G["Rule-Based Fact Extraction (facts.py)"]
-    
-    E --> H["Conditional Scoring Engine (scoring.py)"]
-    F --> H
-    
-    H --> I["Top-Quartile Aggregator (topq) & Z-Score Normalization"]
-    G --> J["Key Facts (Money, Dates, Periods, Auto-Renewal)"]
-    
-    I --> K["Reporting & UI Layer (report.py, report_html.py, web/)"]
-    J --> K
-    
-    K --> L["CLI Table / Interactive HTML Report / Web Explorer"]
+```text
+┌────────────────────────────────────────────────────────┐
+│     Raw Contract Document (.txt, .md, .docx, .pdf)     │
+└───────────────────────────┬────────────────────────────┘
+                            │
+                            ▼
+┌────────────────────────────────────────────────────────┐
+│     Lossless Clause Segmentation (segment.py)          │
+└───────────────────────────┬────────────────────────────┘
+                            │
+             ┌──────────────┼──────────────┐
+             ▼              ▼              ▼
+     ┌──────────────┐┌──────────────┐┌──────────────┐
+     │ Causal Base  ││ Standard     ││ Rule-Based   │
+     │ LM Surprisal ││ Baseline     ││ Fact RegEx   │
+     │ (lm.py)      ││ (baseline.py)││ (facts.py)   │
+     └───────┬──────┘└──────┬───────┘└──────┬───────┘
+             │              │               │
+             └──────┬───────┘               │
+                    ▼                       │
+       ┌────────────────────────┐           │
+       │ Conditional Scoring    │           │
+       │ (scoring.py)           │           │
+       └────────────┬───────────┘           │
+                    │                       │
+                    ▼                       │
+       ┌────────────────────────┐           │
+       │ Top-Quartile Mean &    │           │
+       │ Z-Score Normalization  │           │
+       └────────────┬───────────┘           │
+                    │                       │
+                    └───────────┬───────────┘
+                                ▼
+       ┌─────────────────────────────────────────────────┐
+       │ Standalone HTML Heat-Map Report & Web Explorer  │
+       └─────────────────────────────────────────────────┘
 ```
 
 ### 4. Honest Evaluation & Baseline Comparison
@@ -204,11 +218,11 @@ Honest engineering requires acknowledging what a tool cannot do:
 
 WeirdClauses is 100% open-source under the MIT License:
 
-- **GitHub Repository**: [INSERT: GitHub Repository URL, e.g. https://github.com/your-username/weirdclauses]
+- **GitHub Repository**: [github.com/samashech/weirdClauses](https://github.com/samashech/weirdClauses)
 - **Documentation**:
-  - [Evaluation Results & Methodology](eval/results/benchmark_table.md)
-  - [Limitations & Boundary Conditions](docs/LIMITATIONS.md)
-  - [Real-Contract Case Study Protocol](docs/CASE_STUDY.md)
+  - [Evaluation Results & Methodology](https://github.com/samashech/weirdClauses/blob/main/eval/results/benchmark_table.md)
+  - [Limitations & Boundary Conditions](https://github.com/samashech/weirdClauses/blob/main/docs/LIMITATIONS.md)
+  - [Real-Contract Case Study Protocol](https://github.com/samashech/weirdClauses/blob/main/docs/CASE_STUDY.md)
 
 ---
 
