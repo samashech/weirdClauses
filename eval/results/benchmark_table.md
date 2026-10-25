@@ -31,5 +31,5 @@ Evaluated on 100 synthetic residential leases with 292 planted unusual clauses. 
 - **MRR**: 0.916 [0.871, 0.958]
 
 ### Why this configuration was selected:
-1. **Signal vs. Document Length**: Top-quartile mean (`topq`) focuses on unusual phrasing within each clause rather than diluting signal across standard legalese.
-2. **Context Conditioning**: Priming with standard neighbors ($k=3$) provides comparison context without saturating the causal LM's attention window.
+1. **Signal vs. Length**: `topq` captures the most anomalous phrasing without diluting signal across standard boilerplate.
+2. **Context Conditioning**: Priming with standard neighbors ($k=1, 3$) provides comparison context without saturating attention.

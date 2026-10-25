@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 420" width="850" height="420" style="background:#f8fafc; font-family:system-ui,-apple-system,sans-serif; border-radius:8px; border:1px solid #cbd5e1;">
+  <!-- Browser Chrome -->
+  <rect x="0" y="0" width="850" height="40" fill="#ffffff" border-bottom="1px solid #cbd5e1" rx="8" />
+  <circle cx="20" cy="20" r="5" fill="#ef4444" />
+  <circle cx="36" cy="20" r="5" fill="#f59e0b" />
+  <circle cx="52" cy="20" r="5" fill="#10b981" />
+  <rect x="80" y="8" width="500" height="24" fill="#f1f5f9" stroke="#cbd5e1" rx="4" />
+  <text x="92" y="24" font-size="11" fill="#64748b">http://127.0.0.1:8000 (WeirdClauses Local Web Explorer)</text>
+
+  <!-- Banner -->
+  <rect x="24" y="55" width="802" height="28" fill="#fffbeb" stroke="#fcd34d" rx="4" />
+  <text x="36" y="73" font-size="11" font-weight="600" fill="#92400e">DISCLAIMER: WeirdClauses is NOT legal advice. Zero document text leaves your machine.</text>
+
+  <!-- Controls Panel -->
+  <rect x="24" y="95" width="802" height="135" fill="#ffffff" stroke="#cbd5e1" rx="6" />
+  <text x="40" y="118" font-size="12" font-weight="700" fill="#0f172a">Load Sample Agreement:</text>
+  <rect x="40" y="126" width="360" height="28" fill="#f1f5f9" stroke="#cbd5e1" rx="4" />
+  <text x="50" y="145" font-size="11" fill="#0f172a">Unusual Agreement (Planted Clauses)</text>
+
+  <text x="440" y="118" font-size="12" font-weight="700" fill="#0f172a">Scoring Mode &amp; Aggregator:</text>
+  <rect x="440" y="126" width="180" height="28" fill="#f1f5f9" stroke="#cbd5e1" rx="4" />
+  <text x="450" y="145" font-size="11" fill="#0f172a">Conditional (topq, k=1)</text>
+
+  <rect x="640" y="126" width="160" height="28" fill="#2563eb" rx="4" />
+  <text x="680" y="145" font-size="12" font-weight="700" fill="#ffffff">Analyze Lease</text>
+
+  <text x="40" y="180" font-size="11" fill="#64748b">Input Agreement Snippet:</text>
+  <rect x="40" y="188" width="760" height="30" fill="#f8fafc" stroke="#e2e8f0" rx="3" />
+  <text x="48" y="206" font-family="monospace" font-size="10" fill="#334155">1. PREMISES AND TERM... 2. NOCTURNAL ACCORDION... 3. SOFA SLEEPING... 4. FELINE VISUAL...</text>
+
+  <!-- Results Section -->
+  <g transform="translate(24, 245)">
+    <text x="0" y="16" font-size="14" font-weight="700" fill="#0f172a">Read These First (Ranked Anomalies)</text>
+
+    <!-- Card 1 -->
+    <rect x="0" y="26" width="390" height="130" fill="#ffffff" stroke="#cbd5e1" rx="6" />
+    <rect x="10" y="36" width="60" height="18" fill="#fee2e2" rx="3" />
+    <text x="18" y="49" font-size="10" font-weight="700" fill="#991b1b">RANK #1</text>
+    <text x="80" y="50" font-size="11" font-weight="700" fill="#0f172a">4. Feline Visual Observation</text>
+    <text x="10" y="74" font-size="11" fill="#334155">Mandatory display of 2 domestic felines in front bay windows</text>
+    <text x="10" y="92" font-size="11" fill="#334155">daily from 9 AM to 5 PM. $75 daily penalty.</text>
+    <text x="10" y="118" font-size="10" fill="#64748b">Score: 12.80 bits • Z: +1.13 • Gain: -0.24 • Nearest: Pet Deposit (0.62)</text>
+
+    <!-- Card 2 -->
+    <rect x="412" y="26" width="390" height="130" fill="#ffffff" stroke="#cbd5e1" rx="6" />
+    <rect x="422" y="36" width="60" height="18" fill="#fee2e2" rx="3" />
+    <text x="430" y="49" font-size="10" font-weight="700" fill="#991b1b">RANK #2</text>
+    <text x="492" y="50" font-size="11" font-weight="700" fill="#0f172a">5. Thermodynamic Beverage Logs</text>
+    <text x="422" y="74" font-size="11" fill="#334155">Tenant must maintain daily beverage consumption ledger</text>
+    <text x="422" y="92" font-size="11" fill="#334155">and verify refrigerator temperatures every 6 hours.</text>
+    <text x="422" y="118" font-size="10" fill="#64748b">Score: 12.24 bits • Z: +0.81 • Gain: -1.15 • Nearest: Min Temp (0.58)</text>
+  </g>
+</svg>

@@ -60,9 +60,11 @@ def main(
 
 
 @app.command()
-def doctor() -> None:
+def doctor(
+    mock: Annotated[bool, typer.Option("--mock", help="Check mock offline configuration")] = False,
+) -> None:
     """Diagnose local environment, dependencies, and model cache status."""
-    if not run_doctor(console):
+    if not run_doctor(console, mock=mock):
         raise typer.Exit(code=1)
 
 

@@ -35,6 +35,15 @@ def test_cli_doctor(cli_runner: CliRunner) -> None:
     assert "System is ready" in result.stdout
 
 
+def test_cli_doctor_mock(cli_runner: CliRunner) -> None:
+    """Verify weirdclauses doctor --mock indicates mock mode enabled."""
+    result = cli_runner.invoke(app, ["doctor", "--mock"])
+    assert result.exit_code == 0
+    assert "Mock Mode" in result.stdout
+    assert "ENABLED" in result.stdout
+    assert "System is ready" in result.stdout
+
+
 def test_legal_disclaimer_constant() -> None:
     """Ensure the legal disclaimer is explicitly formulated."""
     assert "NOT legal advice" in LEGAL_DISCLAIMER

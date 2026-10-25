@@ -36,7 +36,7 @@ def check_cache_dir(cache_path: Path) -> tuple[bool, str]:
         return False, f"not writable: {exc}"
 
 
-def run_doctor(console: Console | None = None) -> bool:
+def run_doctor(console: Console | None = None, mock: bool = False) -> bool:
     """Execute all diagnostic checks and print Rich report."""
     con = console or Console()
     con.print(
@@ -53,6 +53,13 @@ def run_doctor(console: Console | None = None) -> bool:
     table.add_column("Details")
 
     all_ok = True
+    is_mock = mock or bool(settings.mock)
+    if is_mock:
+        table.add_row(
+            "Mock Mode",
+            "[bold green]ENABLED[/bold green]",
+            "Deterministic offline testing; no model downloads required",
+        )
     py_ver = f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
     table.add_row("Python Version", "[green]PASS[/green]", f"{py_ver} (>= 3.11)")
 

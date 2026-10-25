@@ -44,3 +44,12 @@ jobs:
       - name: Run WeirdClauses Doctor
         run: |
           weirdclauses doctor
+
+      - name: Verify CLI Scoring and Review in Mock Mode
+        run: |
+          weirdclauses score samples/unusual_rental.txt --mock --top 5
+          weirdclauses review samples/unusual_rental.txt --mock --out /tmp/report.html
+
+      - name: Run Benchmark Pipeline in Mock Mode
+        run: |
+          python -m eval.run_eval --mock --count 5
