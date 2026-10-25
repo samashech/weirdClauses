@@ -192,3 +192,24 @@ def test_cli_serve_help() -> None:
     assert "--port" in result.stdout
     assert "--mock" in result.stdout
     assert "--open" in result.stdout
+
+
+def test_upload_disabled_in_demo(web_server_url: str) -> None:
+    """POST and GET /api/upload return 403 Forbidden explaining demo upload restrictions."""
+    status, _, body = _http_post(f"{web_server_url}/api/upload", {"sample": "data"})
+    assert status == 403
+    assert "disabled" in json.loads(body.decode("utf-8"))["error"].lower()
+
+    status, _, body = _http_get(f"{web_server_url}/api/upload")
+    assert status == 403
+    assert "disabled" in json.loads(body.decode("utf-8"))["error"].lower()
+
+
+def test_public_demo_template_flag(monkeypatch: pytest.MonkeyPatch) -> None:
+    """When WC_PUBLIC_DEMO is active, the template injects public demo flag."""
+    from weirdclauses.config import Settings
+
+    monkeypatch.setattr("weirdclauses.web.ui.settings", Settings(public_demo=True))
+    html = get_web_ui_html()
+    assert "const isPublicDemo = true;" in html
+    assert "{{PUBLIC_DEMO}}" not in html

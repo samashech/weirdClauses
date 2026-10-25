@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: weirdclauses-demo
+    runtime: docker
+    plan: free
+    region: oregon
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: WC_MOCK
+        value: "1"
+      - key: WC_PUBLIC_DEMO
+        value: "1"
+      - key: PORT
+        value: "8000"
+    healthCheckPath: /health

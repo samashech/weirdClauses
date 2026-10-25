@@ -119,6 +119,33 @@ weirdclauses serve --port 8000 --open
 
 ---
 
+## Public Hosted Demo (Mock Mode)
+
+> **HONEST DISCLOSURE**: The hosted web demo serves **precomputed deterministic results on synthetic samples only** (`WC_MOCK=1`, `WC_PUBLIC_DEMO=1`). Because WeirdClauses is fundamentally built for privacy, **arbitrary document uploads are disabled in the hosted demo**, and no request bodies are ever logged. Real-world contract review is **strictly local-only** to guarantee zero data leaves your machine.
+
+- **Hosted URL**: [https://weirdclauses-demo.onrender.com](https://weirdclauses-demo.onrender.com)
+- **Health Check Endpoint**: `GET /health` returns service status and legal disclaimer.
+
+### Deploying Your Own Demo to Render
+
+You can deploy your own instance of the public mock demo on [Render.com](https://render.com) using the included [`render.yaml`](render.yaml) blueprint:
+
+#### Exact Render Dashboard Steps:
+1. **Fork or Push** this repository to your GitHub or GitLab account.
+2. Sign in to the **[Render Dashboard](https://dashboard.render.com)**.
+3. Click the **New +** button in the upper-right corner and select **Blueprint**.
+4. Connect your repository (`weirdclauses`).
+5. Render reads `render.yaml` and automatically configures:
+   - **Service Name**: `weirdclauses-demo`
+   - **Runtime**: `Docker` (using the slim `Dockerfile` without PyTorch)
+   - **Plan**: `Free`
+   - **Health Check Path**: `/health`
+   - **Environment Variables**: `WC_MOCK=1`, `WC_PUBLIC_DEMO=1`, `PORT=8000`
+6. Click **Apply**.
+7. Render builds the lightweight Docker image (~150 MB) and provisions your public web service.
+
+---
+
 ## Configuration
 
 WeirdClauses is configured via environment variables (or a local `.env` file). The settings match `.env.example`:

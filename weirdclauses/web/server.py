@@ -69,6 +69,11 @@ class WeirdClausesHandler(BaseHTTPRequestHandler):
                 self._send_json({"name": filename, "text": target.read_text(encoding="utf-8")})
             else:
                 self._send_json({"error": f"Sample '{filename}' not found"}, status=404)
+        elif path in ("/api/upload", "/upload"):
+            self._send_json(
+                {"error": "Document uploads are disabled in the demo. Real use is local-only."},
+                status=403,
+            )
         else:
             self._send_json({"error": "Not Found"}, status=404)
 
@@ -146,6 +151,11 @@ class WeirdClausesHandler(BaseHTTPRequestHandler):
                 self._send_text(export_markdown(rep), "text/markdown")
             else:
                 self._send_text(export_html(rep), "text/html")
+        elif path in ("/api/upload", "/upload"):
+            self._send_json(
+                {"error": "Document uploads are disabled in the demo. Real use is local-only."},
+                status=403,
+            )
         else:
             self._send_json({"error": "Not Found"}, status=404)
 

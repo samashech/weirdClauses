@@ -74,7 +74,7 @@ footer { text-align:center; margin-top:40px; padding-top:20px; border-top:1px so
           <option value="messy_numbering_rental.txt">Messy Numbering Agreement</option>
         </select>
       </div>
-      <div class="col">
+      <div class="col" id="uploadCol">
         <label for="fileUpload">Or Upload Local File (.txt, .md, .docx, .pdf):</label>
         <input type="file" id="fileUpload" accept=".txt,.md,.docx,.pdf" onchange="handleFileUpload(this)">
       </div>
@@ -148,6 +148,14 @@ footer { text-align:center; margin-top:40px; padding-top:20px; border-top:1px so
 
 <script>
 let currentReport = null;
+const isPublicDemo = {{PUBLIC_DEMO}};
+
+if (isPublicDemo) {
+  const uploadCol = document.getElementById('uploadCol');
+  if (uploadCol) {
+    uploadCol.innerHTML = '<label>Public Demo Mode:</label><div style="font-size:0.82rem; color:var(--text-muted); padding:8px 10px; background:var(--surface-alt); border-radius:6px; border:1px solid var(--border);">Document uploads are disabled in this hosted demo. Real contract use is strictly local-only. Please select a synthetic sample to explore.</div>';
+  }
+}
 
 function toggleTheme() {
   const cur = document.documentElement.getAttribute('data-theme') ||
